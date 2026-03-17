@@ -69,25 +69,25 @@ export default function LivestockPage() {
                 href={`/livestock/${animal.id}`}
                 className="flex items-center justify-between gap-3 py-3 transition hover:bg-slate-800/60"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 items-center gap-3">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-700 text-xs font-semibold text-slate-50 ring-1 ring-slate-600">
                     {(animal.name || animal.externalId || "?")
                       .toString()
                       .slice(0, 2)
                       .toUpperCase()}
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-50">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-slate-50">
                       {animal.name || animal.externalId}
                     </p>
-                    <p className="text-xs text-slate-300">
+                    <p className="truncate text-xs text-slate-300">
                       {animal.species}
                       {animal.breed ? ` • ${animal.breed}` : ""}
                       {animal.externalId ? ` • ID: ${animal.externalId}` : ""}
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1 text-xs text-slate-300">
+                <div className="hidden flex-col items-end gap-1 text-xs text-slate-300 sm:flex">
                   {animal.dateOfBirth && (
                     <span>DOB: {animal.dateOfBirth}</span>
                   )}

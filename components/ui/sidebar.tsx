@@ -36,7 +36,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="flex h-full min-h-screen w-64 shrink-0 flex-col border-r border-slate-800/60 bg-slate-900/80 shadow-xl shadow-black/30 backdrop-blur">
+    <aside className="flex h-full min-h-dvh w-64 shrink-0 flex-col border-r border-slate-800/60 bg-slate-900/80 shadow-xl shadow-black/30 backdrop-blur">
       {/* Brand */}
       <div className="flex items-center gap-3 border-b border-slate-800/60 px-5 py-5">
         <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 via-emerald-500 to-teal-400 text-sm font-bold text-slate-950 shadow-lg shadow-emerald-500/40">

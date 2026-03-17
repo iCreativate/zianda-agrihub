@@ -9,6 +9,19 @@ body {
     radial-gradient(circle at bottom, rgba(34, 197, 94, 0.16), transparent 60%),
     #020617;
   color: #e5e7eb;
+  min-height: 100dvh;
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+video,
+canvas {
+  max-width: 100%;
 }
 
 @layer components {
