@@ -41,6 +41,9 @@ export default function LivestockDetailPage({ params }: LivestockDetailPageProps
     );
   }
 
+  // Help TypeScript (and build) understand animal is defined below.
+  const a = animal;
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -50,11 +53,11 @@ export default function LivestockDetailPage({ params }: LivestockDetailPageProps
       const { error: updateError } = await supabase
         .from("livestock")
         .update({
-          name: name.trim() || animal.externalId,
+          name: name.trim() || a.externalId,
           breed: breed.trim() || null,
           weight_kg: weightKg ? Number(weightKg) : null
         })
-        .eq("id", animal.id);
+        .eq("id", a.id);
 
       if (updateError) {
         setError(updateError.message);
@@ -83,7 +86,7 @@ export default function LivestockDetailPage({ params }: LivestockDetailPageProps
       const { error: deleteError } = await supabase
         .from("livestock")
         .delete()
-        .eq("id", animal.id);
+        .eq("id", a.id);
 
       if (deleteError) {
         setError(deleteError.message);

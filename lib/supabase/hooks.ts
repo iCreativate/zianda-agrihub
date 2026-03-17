@@ -158,6 +158,7 @@ export function useDashboardMetrics() {
         .select("*")
         .gte("date", new Date(today.getFullYear(), today.getMonth(), 1).toISOString().slice(0, 10))
         .lte(
+          "date",
           new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().slice(0, 10)
         );
 

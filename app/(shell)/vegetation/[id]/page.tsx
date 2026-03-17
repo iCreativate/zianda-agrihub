@@ -62,6 +62,9 @@ export default function VegetationDetailPage({ params }: VegetationDetailPagePro
     );
   }
 
+  // Help TypeScript (and build) understand block is defined below.
+  const b = block;
+
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -71,7 +74,7 @@ export default function VegetationDetailPage({ params }: VegetationDetailPagePro
       const { error: updateError } = await supabase
         .from("vegetation_blocks")
         .update({
-          external_id: externalId.trim() || block.externalId,
+          external_id: externalId.trim() || b.externalId,
           crop_type: cropType,
           variety:
             variety.trim() ||
@@ -82,7 +85,7 @@ export default function VegetationDetailPage({ params }: VegetationDetailPagePro
           area_hectares: areaHectares ? Number(areaHectares) : null,
           updated_at: new Date().toISOString()
         })
-        .eq("id", block.id);
+        .eq("id", b.id);
 
       if (updateError) {
         setError(updateError.message);
@@ -110,7 +113,7 @@ export default function VegetationDetailPage({ params }: VegetationDetailPagePro
       const { error: deleteError } = await supabase
         .from("vegetation_blocks")
         .delete()
-        .eq("id", block.id);
+        .eq("id", b.id);
 
       if (deleteError) {
         setError(deleteError.message);
