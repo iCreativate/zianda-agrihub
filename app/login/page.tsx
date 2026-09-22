@@ -5,10 +5,10 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-slate-950 px-4 py-12 text-slate-50">
+        <main className="min-h-screen bg-ivory px-4 py-12">
           <div className="mx-auto w-full max-w-sm">
             <div className="card-shell">
-              <p className="text-sm text-slate-300">Loading…</p>
+              <p className="text-sm text-ink-muted">Loading…</p>
             </div>
           </div>
         </main>

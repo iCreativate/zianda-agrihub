@@ -3,31 +3,33 @@
 import Link from "next/link";
 import { useLineageOverview } from "@/lib/supabase/hooks";
 import { PawPrint, CircleAlert, Loader2 } from "lucide-react";
+import { PageHero } from "@/components/ui/page-hero";
+import { AppPage } from "@/components/shell/app-page";
 
 export default function LineagePage() {
   const { data, isLoading, isError } = useLineageOverview();
 
   return (
-    <div className="space-y-8">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 md:text-3xl">
-            Lineage & parentage
-          </h1>
-          <p className="mt-1 text-sm text-slate-500">
-            How calves link to their sire and dam for breeding and traceability.
-          </p>
-        </div>
-        <Link
-          href="/livestock"
-          className="text-sm font-medium text-slate-500 hover:text-slate-800"
-        >
-          ← Back to livestock
-        </Link>
-      </div>
-
+    <AppPage
+      hero={
+        <PageHero
+        eyebrow="Breeding"
+        title="Lineage & parentage"
+        description="How calves link to their sire and dam for breeding and traceability."
+        image="/images/home/sheep.jpg"
+        imageAlt="Breeding stock on the veld"
+        asideTitle="Bloodlines"
+        asideNote="Link calves to sire and dam so breeding decisions stay traceable."
+        actions={
+          <Link href="/livestock" className="btn-secondary min-h-12">
+            ← Back to livestock
+          </Link>
+        }
+      />
+      }
+    >
       {isError && (
-        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <div className="flex items-center gap-2 alert-error">
           <CircleAlert className="h-5 w-5 shrink-0" />
           <span>
             Could not load lineage information. Check your connection or Supabase settings.
@@ -36,16 +38,16 @@ export default function LineagePage() {
       )}
 
       {isLoading && (
-        <div className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-          <Loader2 className="h-5 w-5 animate-spin text-slate-400" />
+        <div className="flex items-center gap-2 surface px-4 py-3 text-sm text-ink-muted">
+          <Loader2 className="h-5 w-5 animate-spin text-ink-subtle" />
           <span>Loading lineage…</span>
         </div>
       )}
 
       {!isLoading && data && data.length === 0 && !isError && (
-        <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-600 shadow-sm">
-          <PawPrint className="mx-auto h-10 w-10 text-slate-300" />
-          <h2 className="mt-3 text-lg font-semibold text-slate-900">
+        <div className="empty-state text-sm text-ink-muted">
+          <PawPrint className="mx-auto h-10 w-10 text-ink-muted" />
+          <h2 className="mt-3 text-lg font-semibold text-ink">
             No lineage records yet
           </h2>
           <p className="mt-2">
@@ -56,37 +58,37 @@ export default function LineagePage() {
       )}
 
       {!isLoading && data && data.length > 0 && (
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div className="surface overflow-hidden">
           <div className="max-h-[480px] overflow-auto">
-            <table className="min-w-full divide-y divide-slate-100 text-sm">
-              <thead className="bg-slate-50">
+            <table className="data-table">
+              <thead className="bg-ivory">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-ink-subtle">
                     Calf
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-ink-subtle">
                     Parent
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-slate-500">
+                  <th className="px-4 py-2 text-left text-xs font-semibold uppercase tracking-wider text-ink-subtle">
                     Relationship
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-stone">
                 {data.map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50/80">
+                  <tr key={row.id} className="hover:bg-ivory-deep">
                     <td className="px-4 py-2">
                       <div className="flex flex-col">
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-ink">
                           {row.child?.name ?? row.child?.externalId ?? "Unknown"}
                         </span>
                         {row.child?.externalId && (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-ink-subtle">
                             ID: {row.child.externalId}
                           </span>
                         )}
                         {row.child?.species && (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-ink-subtle">
                             Species: {row.child.species}
                           </span>
                         )}
@@ -94,22 +96,22 @@ export default function LineagePage() {
                     </td>
                     <td className="px-4 py-2">
                       <div className="flex flex-col">
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-ink">
                           {row.parent?.name ?? row.parent?.externalId ?? "Unknown"}
                         </span>
                         {row.parent?.externalId && (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-ink-subtle">
                             ID: {row.parent.externalId}
                           </span>
                         )}
                         {row.parent?.species && (
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-ink-subtle">
                             Species: {row.parent.species}
                           </span>
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-slate-800">
+                    <td className="px-4 py-2 text-ink">
                       {row.relationship === "sire" ? "Sire (father)" : "Dam (mother)"}
                     </td>
                   </tr>
@@ -121,16 +123,16 @@ export default function LineagePage() {
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-600">
-          <p className="font-semibold text-slate-900">Using lineage data</p>
+        <div className="surface p-5 text-sm text-ink-muted">
+          <p className="font-semibold text-ink">Using lineage data</p>
           <ul className="mt-1 list-disc space-y-1 pl-4">
             <li>Identify which sires and dams are producing your best-performing calves.</li>
             <li>Avoid close inbreeding by checking relationships before pairing animals.</li>
             <li>Share traceability information with buyers who care about bloodlines.</li>
           </ul>
         </div>
-        <div className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 text-sm text-slate-600">
-          <p className="font-semibold text-slate-900">What you can do next</p>
+        <div className="surface p-5 text-sm text-ink-muted">
+          <p className="font-semibold text-ink">What you can do next</p>
           <ul className="mt-1 list-disc space-y-1 pl-4">
             <li>Use the Add animal form to link new calves to their sire and dam.</li>
             <li>Update animal profiles with notes about fertility, milk, or growth.</li>
@@ -138,7 +140,7 @@ export default function LineagePage() {
           </ul>
         </div>
       </div>
-    </div>
+    </AppPage>
   );
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { FormPage } from "@/components/shell/form-page";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -77,51 +78,53 @@ export default function EditSeedPage() {
     }
   }
 
-  if (!loaded) return <p className="text-sm text-slate-400">Loading…</p>;
+  if (!loaded) return <p className="text-sm text-ink-subtle">Loading…</p>;
 
   return (
-    <div className="space-y-6">
-      <Link href={`/seeds/${id}`} className="text-sm font-medium text-slate-300 hover:text-white">← Back to seed record</Link>
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">Edit seed record</h1>
-        <p className="text-sm text-slate-300">Update the details below.</p>
-      </div>
+    <FormPage
+      backHref={`/seeds/${id}`}
+      backLabel="Back to seed record"
+      eyebrow="Inputs"
+      title="Edit seed record"
+      
+      image="/images/home/vegetables.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
-          <div role="alert" className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200">{error}</div>
+          <div role="alert" className="alert-error">{error}</div>
         )}
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="variety">Variety name</label>
-          <input id="variety" type="text" value={variety} onChange={(e) => setVariety(e.target.value)} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="variety">Variety name</label>
+          <input id="variety" type="text" value={variety} onChange={(e) => setVariety(e.target.value)} className="input-field mt-1" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="supplier">Supplier</label>
-          <input id="supplier" type="text" value={supplier} onChange={(e) => setSupplier(e.target.value)} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="supplier">Supplier</label>
+          <input id="supplier" type="text" value={supplier} onChange={(e) => setSupplier(e.target.value)} className="input-field mt-1" />
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="batch">Batch / lot number</label>
-            <input id="batch" type="text" value={batch} onChange={(e) => setBatch(e.target.value)} className="input-dark mt-1" />
+            <label className="label-field" htmlFor="batch">Batch / lot number</label>
+            <input id="batch" type="text" value={batch} onChange={(e) => setBatch(e.target.value)} className="input-field mt-1" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="quantity">Quantity</label>
-            <input id="quantity" type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="input-dark mt-1" />
+            <label className="label-field" htmlFor="quantity">Quantity</label>
+            <input id="quantity" type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="input-field mt-1" />
           </div>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="storageLocation">Storage location (optional)</label>
-          <input id="storageLocation" type="text" value={storageLocation} onChange={(e) => setStorageLocation(e.target.value)} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="storageLocation">Storage location (optional)</label>
+          <input id="storageLocation" type="text" value={storageLocation} onChange={(e) => setStorageLocation(e.target.value)} className="input-field mt-1" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200">Image (optional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-slate-200" />
-          {imageFile && <p className="mt-1 text-xs text-slate-500">New: {imageFile.name}</p>}
+          <label className="label-field">Image (optional)</label>
+          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-lg file:border-0 file:bg-stone file:px-3 file:py-1.5 file:text-ink-muted" />
+          {imageFile && <p className="mt-1 text-xs text-ink-subtle">New: {imageFile.name}</p>}
         </div>
         <div className="flex gap-3">
           <button type="submit" className="btn-primary" disabled={submitting}>{submitting ? "Saving…" : "Save changes"}</button>
           <Link href={`/seeds/${id}`} className="btn-secondary">Cancel</Link>
         </div>
       </form>
-    </div>
+    </FormPage>
   );
 }

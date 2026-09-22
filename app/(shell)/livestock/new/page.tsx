@@ -1,8 +1,8 @@
 "use client";
 
+import { FormPage } from "@/components/shell/form-page";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { buildVaccinationScheduleForCalf } from "@/lib/health/vaccination-schedule";
@@ -226,30 +226,19 @@ export default function NewLivestockPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-2">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
-            Add animal
-          </h1>
-          <p className="mt-1 text-sm text-slate-300">
-            Add a new animal to your herd. We&apos;ll generate a QR health card so you can
-            scan and view records in the kraal.
-          </p>
-        </div>
-        <Link
-          href="/livestock"
-          className="text-sm font-medium text-slate-300 hover:text-white"
-        >
-          Cancel
-        </Link>
-      </div>
-
+    <FormPage
+      backHref="/livestock"
+      backLabel="Back to livestock"
+      eyebrow="Herd"
+      title="Add animal"
+      description="Add a new animal to your herd. We\'ll generate a QR health card so you can scan and view records in the kraal."
+      image="/images/home/livestock.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
           <div
             role="alert"
-            className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200"
+            className="alert-error"
           >
             {error}
           </div>
@@ -257,7 +246,7 @@ export default function NewLivestockPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="animal-name">
+            <label className="label-field" htmlFor="animal-name">
               Name
             </label>
             <input
@@ -266,12 +255,12 @@ export default function NewLivestockPage() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Cow 101"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
           </div>
           <div>
             <label
-              className="block text-sm font-medium text-slate-200"
+              className="label-field"
               htmlFor="animal-external-id"
             >
               Animal ID (optional)
@@ -282,9 +271,9 @@ export default function NewLivestockPage() {
               value={externalId}
               onChange={(e) => setExternalId(e.target.value)}
               placeholder="If empty, we will generate one"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Use your ear-tag, collar, or kennel number. This ID is also printed on the QR tag.
             </p>
           </div>
@@ -292,14 +281,14 @@ export default function NewLivestockPage() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="animal-species">
+            <label className="label-field" htmlFor="animal-species">
               Species
             </label>
             <select
               id="animal-species"
               value={species}
               onChange={(e) => setSpecies(e.target.value as LivestockSpecies)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             >
               {speciesOptions.map((option) => (
                 <option key={option} value={option}>
@@ -307,13 +296,13 @@ export default function NewLivestockPage() {
                 </option>
               ))}
             </select>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Choose the closest species. Breeders can use breed + lineage to track bloodlines
               (e.g. dogs).
             </p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="animal-breed">
+            <label className="label-field" htmlFor="animal-breed">
               Breed (optional)
             </label>
             <input
@@ -323,7 +312,7 @@ export default function NewLivestockPage() {
               onChange={(e) => setBreed(e.target.value)}
               placeholder="e.g. Brahman"
               list="breed-options"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
             <datalist id="breed-options">
               {breedSuggestions[species].map((b) => (
@@ -332,7 +321,7 @@ export default function NewLivestockPage() {
             </datalist>
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="animal-weight">
+            <label className="label-field" htmlFor="animal-weight">
               Current weight (kg, optional)
             </label>
             <input
@@ -342,9 +331,9 @@ export default function NewLivestockPage() {
               step="0.1"
               value={weightKg}
               onChange={(e) => setWeightKg(e.target.value)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Optional, but useful for dosing, growth tracking, and sale planning.
             </p>
           </div>
@@ -352,7 +341,7 @@ export default function NewLivestockPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="animal-dob">
+            <label className="label-field" htmlFor="animal-dob">
               Date of birth (for schedule)
             </label>
             <input
@@ -360,9 +349,9 @@ export default function NewLivestockPage() {
               type="date"
               value={dob}
               onChange={(e) => setDob(e.target.value)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               If you set a DOB for cattle, we will propose a schedule (for example: Brucellosis
               around 3 months, Anthrax around 6 months).
             </p>
@@ -371,10 +360,10 @@ export default function NewLivestockPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <h2 className="text-sm font-semibold text-slate-50">
+            <h2 className="text-sm font-semibold text-ink">
               Lineage &amp; parentage (optional)
             </h2>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Link this animal to an existing sire and dam using their Animal IDs. This helps with
               breeding records and traceability.
             </p>
@@ -382,7 +371,7 @@ export default function NewLivestockPage() {
           <div className="space-y-3">
             <div>
               <label
-                className="block text-sm font-medium text-slate-200"
+                className="label-field"
                 htmlFor="animal-sire-id"
               >
                 Sire ID (father)
@@ -393,12 +382,12 @@ export default function NewLivestockPage() {
                 value={sireExternalId}
                 onChange={(e) => setSireExternalId(e.target.value)}
                 placeholder="Animal ID of sire (must already exist)"
-                className="input-dark mt-1"
+                className="input-field mt-1"
               />
             </div>
             <div>
               <label
-                className="block text-sm font-medium text-slate-200"
+                className="label-field"
                 htmlFor="animal-dam-id"
               >
                 Dam ID (mother)
@@ -409,7 +398,7 @@ export default function NewLivestockPage() {
                 value={damExternalId}
                 onChange={(e) => setDamExternalId(e.target.value)}
                 placeholder="Animal ID of dam (must already exist)"
-                className="input-dark mt-1"
+                className="input-field mt-1"
               />
             </div>
           </div>
@@ -417,10 +406,10 @@ export default function NewLivestockPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <h2 className="text-sm font-semibold text-slate-50">
+            <h2 className="text-sm font-semibold text-ink">
               Vaccination (optional)
             </h2>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Record a vaccine this animal has already received. Future vaccines will be suggested
               automatically from the schedule.
             </p>
@@ -428,7 +417,7 @@ export default function NewLivestockPage() {
           <div className="space-y-3">
             <div>
               <label
-                className="block text-sm font-medium text-slate-200"
+                className="label-field"
                 htmlFor="animal-vaccine-name"
               >
                 Vaccine name
@@ -439,12 +428,12 @@ export default function NewLivestockPage() {
                 value={initialVaccineName}
                 onChange={(e) => setInitialVaccineName(e.target.value)}
                 placeholder="e.g. Brucellosis"
-                className="input-dark mt-1"
+                className="input-field mt-1"
               />
             </div>
             <div>
               <label
-                className="block text-sm font-medium text-slate-200"
+                className="label-field"
                 htmlFor="animal-vaccine-date"
               >
                 Date given
@@ -454,7 +443,7 @@ export default function NewLivestockPage() {
                 type="date"
                 value={initialVaccineDate}
                 onChange={(e) => setInitialVaccineDate(e.target.value)}
-                className="input-dark mt-1"
+                className="input-field mt-1"
               />
             </div>
           </div>
@@ -469,8 +458,8 @@ export default function NewLivestockPage() {
         </button>
       </form>
 
-      <div className="rounded-2xl border border-dashed border-slate-600 bg-slate-800/40 p-5 text-sm text-slate-300">
-        <p className="font-semibold text-slate-50">What happens after you save?</p>
+      <div className="rounded-2xl border border-dashed border-stone-strong bg-ivory-deep p-5 text-sm text-ink-muted">
+        <p className="font-semibold text-ink">What happens after you save?</p>
         <ul className="mt-2 list-disc space-y-1 pl-5">
           <li>
             We create a QR health card for this animal that you can scan in the kraal or
@@ -488,7 +477,7 @@ export default function NewLivestockPage() {
           </li>
         </ul>
       </div>
-    </div>
+    </FormPage>
   );
 }
 

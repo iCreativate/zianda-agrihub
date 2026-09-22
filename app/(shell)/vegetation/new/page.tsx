@@ -1,10 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { FormPage } from "@/components/shell/form-page";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { Camera, ImagePlus, X } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { uploadItemImage, assertImageWithinLimit, formatMaxImageSize } from "@/lib/supabase/upload";
+import { encodeTimelineNotes } from "@/lib/livestock/timeline-notes";
+import { currentCropStage } from "@/lib/crops/stages";
 import type { CropType, VegetationBlock } from "@/types/agriculture";
 
 const cropTypeOptions: CropType[] = [
@@ -20,6 +24,7 @@ const cropTypeOptions: CropType[] = [
 export default function NewVegetationBlockPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const fileRef = useRef<HTMLInputElement | null>(null);
   const [externalId, setExternalId] = useState("");
   const [cropType, setCropType] = useState<CropType>("maize");
   const [customCropName, setCustomCropName] = useState("");
@@ -27,8 +32,25 @@ export default function NewVegetationBlockPage() {
   const [plantingDate, setPlantingDate] = useState("");
   const [areaValue, setAreaValue] = useState<string>("");
   const [areaUnit, setAreaUnit] = useState<"ha" | "m2">("ha");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const previewUrl = useMemo(
+    () => (imageFile ? URL.createObjectURL(imageFile) : null),
+    [imageFile]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  function clearImage() {
+    setImageFile(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,12 +71,9 @@ export default function NewVegetationBlockPage() {
     const payload = {
       external_id: baseId,
       crop_type: cropType,
-      // If farmer selects "other" and types a custom name, default variety to that name
       variety:
         variety.trim() ||
-        (cropType === "other" && customCropName.trim()
-          ? customCropName.trim()
-          : null),
+        (cropType === "other" && customCropName.trim() ? customCropName.trim() : null),
       planting_date: plantingDate || null,
       area_hectares: areaHectares,
       qr_code: baseId
@@ -73,6 +92,35 @@ export default function NewVegetationBlockPage() {
         return;
       }
 
+      if (imageFile && data?.id) {
+        const photoUrl = await uploadItemImage(imageFile, "vegetation", data.id);
+        const stage = currentCropStage(cropType, plantingDate || undefined);
+        const notes = encodeTimelineNotes({
+          note: "Field photo added when creating this block",
+          cropStage: stage.id
+        });
+
+        const { error: photoError } = await supabase
+          .from("vegetation_blocks")
+          .update({
+            photo_url: photoUrl,
+            updated_at: new Date().toISOString()
+          })
+          .eq("id", data.id);
+
+        if (photoError) throw photoError;
+
+        const { error: timelineError } = await supabase.from("health_timeline_photos").insert({
+          asset_type: "vegetation",
+          asset_id: data.id,
+          photo_url: photoUrl,
+          notes,
+          captured_at: new Date().toISOString()
+        });
+
+        if (timelineError) throw timelineError;
+      }
+
       const created: VegetationBlock = {
         id: data.id,
         externalId: data.external_id,
@@ -81,6 +129,7 @@ export default function NewVegetationBlockPage() {
         plantingDate: data.planting_date,
         areaHectares: data.area_hectares ?? undefined,
         qrCode: data.qr_code ?? undefined,
+        photoUrl: data.photo_url ?? undefined,
         createdAt: data.created_at,
         updatedAt: data.updated_at
       };
@@ -100,44 +149,105 @@ export default function NewVegetationBlockPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-2">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
-            Add crop block
-          </h1>
-          <p className="mt-1 text-sm text-slate-300">
-            Create a block for a field or paddock so you can track variety, planting date, soil
-            logs, and inputs.
-          </p>
-        </div>
-        <Link
-          href="/vegetation"
-          className="text-sm font-medium text-slate-300 hover:text-white"
-        >
-          Cancel
-        </Link>
-      </div>
-
-      <form
-        onSubmit={handleSubmit}
-        className="card-shell space-y-5"
-      >
+    <FormPage
+      backHref="/vegetation"
+      backLabel="Back to fields"
+      eyebrow="Fields"
+      title="Add crop block"
+      description="Create a block for a field or paddock so you can track variety, planting date, soil logs, and inputs."
+      image="/images/home/aerial.jpg"
+    >
+      <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
-          <div
-            role="alert"
-            className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200"
-          >
+          <div role="alert" className="alert-error">
             {error}
           </div>
         )}
 
+        <div>
+          <p className="label-field">Field photo (optional)</p>
+          <p className="mt-1 text-xs text-ink-subtle">
+            Add a picture of the field now so it shows on the farm map and growth timeline. Max{" "}
+            {formatMaxImageSize()}.
+          </p>
+
+          <input
+            ref={fileRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              if (!file) {
+                setImageFile(null);
+                return;
+              }
+              try {
+                assertImageWithinLimit(file);
+                setError(null);
+                setImageFile(file);
+              } catch (err) {
+                setImageFile(null);
+                if (fileRef.current) fileRef.current.value = "";
+                setError(err instanceof Error ? err.message : "Image is too large.");
+              }
+            }}
+          />
+
+          {previewUrl ? (
+            <div className="relative mt-3 overflow-hidden rounded-card border border-stone bg-ivory">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={previewUrl}
+                alt="Selected field"
+                className="aspect-[16/9] w-full object-cover"
+              />
+              <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-ink/80 to-transparent p-3 pt-10">
+                <p className="truncate text-sm text-paper">{imageFile?.name}</p>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="btn-secondary min-h-9 bg-paper/95 text-xs"
+                  >
+                    Change
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearImage}
+                    className="inline-flex min-h-9 items-center gap-1 rounded-control border border-stone-strong bg-paper/95 px-3 text-xs font-medium text-ink"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="mt-3 flex min-h-[160px] w-full flex-col items-center justify-center gap-2 rounded-card border-2 border-dashed border-stone-strong bg-ivory px-4 py-8 text-center transition hover:border-ink/25 hover:bg-paper"
+            >
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-paper text-ink-subtle">
+                <ImagePlus className="h-6 w-6" />
+              </span>
+              <span className="text-sm font-semibold text-ink">Add field photo</span>
+              <span className="max-w-xs text-xs text-ink-muted">
+                Take a photo or choose one from your library.
+              </span>
+              <span className="mt-1 inline-flex items-center gap-1.5 text-xs font-medium text-ink-muted">
+                <Camera className="h-3.5 w-3.5" />
+                Camera or gallery
+              </span>
+            </button>
+          )}
+        </div>
+
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label
-              className="block text-sm font-medium text-slate-200"
-              htmlFor="block-external-id"
-            >
+            <label className="label-field" htmlFor="block-external-id">
               Block ID (optional)
             </label>
             <input
@@ -146,24 +256,21 @@ export default function NewVegetationBlockPage() {
               value={externalId}
               onChange={(e) => setExternalId(e.target.value)}
               placeholder="e.g. Field 1 - Maize North"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Use a name your team already recognises. This ID will appear on the QR tag.
             </p>
           </div>
           <div>
-            <label
-              className="block text-sm font-medium text-slate-200"
-              htmlFor="block-crop-type"
-            >
+            <label className="label-field" htmlFor="block-crop-type">
               Crop type
             </label>
             <select
               id="block-crop-type"
               value={cropType}
               onChange={(e) => setCropType(e.target.value as CropType)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             >
               {cropTypeOptions.map((option) => (
                 <option key={option} value={option}>
@@ -174,7 +281,7 @@ export default function NewVegetationBlockPage() {
             {cropType === "other" && (
               <>
                 <label
-                  className="mt-3 block text-xs font-medium text-slate-200"
+                  className="mt-3 block text-xs font-medium text-ink-muted"
                   htmlFor="block-custom-crop-name"
                 >
                   Custom crop name
@@ -185,9 +292,9 @@ export default function NewVegetationBlockPage() {
                   value={customCropName}
                   onChange={(e) => setCustomCropName(e.target.value)}
                   placeholder="e.g. onions, green beans"
-                  className="input-dark mt-1 text-sm"
+                  className="input-field mt-1 text-sm"
                 />
-                <p className="mt-1 text-xs text-slate-400">
+                <p className="mt-1 text-xs text-ink-subtle">
                   Pick a main crop type from the list, then give it your own name when needed.
                 </p>
               </>
@@ -197,7 +304,7 @@ export default function NewVegetationBlockPage() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="block-variety">
+            <label className="label-field" htmlFor="block-variety">
               Variety (optional)
             </label>
             <input
@@ -206,14 +313,11 @@ export default function NewVegetationBlockPage() {
               value={variety}
               onChange={(e) => setVariety(e.target.value)}
               placeholder="e.g. PAN 53, local variety"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
           </div>
           <div>
-            <label
-              className="block text-sm font-medium text-slate-200"
-              htmlFor="block-planting-date"
-            >
+            <label className="label-field" htmlFor="block-planting-date">
               Planting date
             </label>
             <input
@@ -221,14 +325,11 @@ export default function NewVegetationBlockPage() {
               type="date"
               value={plantingDate}
               onChange={(e) => setPlantingDate(e.target.value)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
           </div>
           <div>
-            <label
-              className="block text-sm font-medium text-slate-200"
-              htmlFor="block-area"
-            >
+            <label className="label-field" htmlFor="block-area">
               Area (optional)
             </label>
             <div className="mt-1 flex gap-2">
@@ -239,33 +340,29 @@ export default function NewVegetationBlockPage() {
                 step={areaUnit === "ha" ? "0.01" : "1"}
                 value={areaValue}
                 onChange={(e) => setAreaValue(e.target.value)}
-                className="input-dark"
+                className="input-field"
               />
               <select
                 aria-label="Area unit"
                 value={areaUnit}
                 onChange={(e) => setAreaUnit(e.target.value as "ha" | "m2")}
-                className="input-dark"
+                className="input-field"
               >
                 <option value="ha">ha</option>
                 <option value="m2">m²</option>
               </select>
             </div>
-            <p className="mt-1 text-xs text-slate-400">
-              Use hectares (ha) for larger fields or square metres (m²) for smaller plots. 1 ha = 10,000 m².
+            <p className="mt-1 text-xs text-ink-subtle">
+              Use hectares (ha) for larger fields or square metres (m²) for smaller plots. 1 ha =
+              10,000 m².
             </p>
           </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="btn-primary disabled:opacity-60"
-        >
-          {submitting ? "Saving block…" : "Save block"}
+        <button type="submit" disabled={submitting} className="btn-primary disabled:opacity-60">
+          {submitting ? (imageFile ? "Saving block & photo…" : "Saving block…") : "Save block"}
         </button>
       </form>
-    </div>
+    </FormPage>
   );
 }
-

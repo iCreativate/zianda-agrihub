@@ -1,105 +1,71 @@
 "use client";
 
 import Link from "next/link";
-import { HealthCard } from "@/components/ui/health-card";
 import { useScanAssetById } from "@/lib/supabase/hooks";
-import { FarmAssistantPanel } from "@/components/ui/FarmAssistantPanel";
-import { LivestockKnowledgePanel } from "@/components/ui/LivestockKnowledgePanel";
+import {
+  LivestockScanPassport,
+  VegetationScanPassport
+} from "@/components/scan/scan-passport";
 import type { Livestock, VegetationBlock } from "@/types/agriculture";
-import type { CareContext } from "@/lib/assistant/care";
 
 interface ScanPageProps {
   params: { id: string };
-}
-
-function buildCareContext(asset: Livestock | VegetationBlock | null): CareContext | null {
-  if (!asset) return null;
-
-  // Livestock vs crop determination follows HealthCard logic
-  const isLivestock = (asset as Livestock).species !== undefined;
-
-  if (isLivestock) {
-    const a = asset as Livestock;
-    let ageDays: number | undefined;
-    if (a.dateOfBirth) {
-      const dob = new Date(a.dateOfBirth);
-      if (!Number.isNaN(dob.getTime())) {
-        const diffMs = Date.now() - dob.getTime();
-        ageDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      }
-    }
-    return {
-      kind: "livestock",
-      species: a.species,
-      ageDays,
-    };
-  }
-
-  const block = asset as VegetationBlock;
-  // Very simple stage inference based on planting date; can be refined later
-  let stage: string | undefined;
-  if (block.plantingDate) {
-    const planted = new Date(block.plantingDate);
-    if (!Number.isNaN(planted.getTime())) {
-      const diffDays = Math.floor((Date.now() - planted.getTime()) / (1000 * 60 * 60 * 24));
-      if (diffDays < 30) stage = "seedling";
-      else if (diffDays < 90) stage = "flowering";
-      else stage = "finishing";
-    }
-  }
-
-  return {
-    kind: "crop",
-    cropType: String(block.cropType ?? "").toLowerCase(),
-    stage,
-  };
 }
 
 export default function ScanPage(props: ScanPageProps) {
   const { id } = props.params;
   const { data, isLoading, isError } = useScanAssetById(id);
 
-  const asset = data?.data ?? null;
-  const careContext = buildCareContext(asset);
+  const isLivestock = data?.type === "livestock";
+  const isVegetation = data?.type === "vegetation";
 
   return (
-    <div className="mx-auto w-full max-w-md space-y-4">
+    <div className="mx-auto w-full max-w-5xl space-y-5">
       <Link
         href="/scan"
-        className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-300 transition hover:text-white"
+        className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-muted transition hover:text-ink"
       >
         ← Back to Scan
       </Link>
 
       {isLoading && (
-        <div className="rounded-2xl border border-slate-700/40 bg-slate-900/80 p-6 text-center shadow-md shadow-black/40">
-          <p className="text-sm text-slate-300">
-            Loading health card from Zianda Agri-Hub…
-          </p>
+        <div className="rounded-card border border-stone bg-paper p-8 text-center shadow-soft">
+          <p className="text-sm text-ink-muted">Looking up this tag on the platform…</p>
         </div>
       )}
+
       {isError && (
-        <div className="rounded-2xl border border-red-900/50 bg-red-950/30 p-4 shadow-md">
-          <p className="text-sm text-red-200">
-            Unable to load this QR record. Check your connection or try again later.
-          </p>
+        <div className="alert-error">
+          Unable to load this QR record. Check your connection or try again later.
         </div>
       )}
-      {!isLoading && !isError && !asset && (
-        <div className="rounded-2xl border border-amber-900/50 bg-amber-950/30 p-4 shadow-md">
-          <p className="text-sm text-amber-200">
-            No asset found for this QR code. It may have been deleted or not yet synced.
+
+      {!isLoading && !isError && !data && (
+        <div className="rounded-card border border-stone bg-paper p-8 shadow-soft">
+          <h1 className="text-xl font-semibold tracking-tight text-ink">No record found</h1>
+          <p className="mt-2 text-sm text-ink-muted">
+            Nothing on the platform matches tag{" "}
+            <span className="font-mono font-medium text-ink">{decodeURIComponent(id)}</span>.
+            It may have been deleted, not synced yet, or the QR points to a different ID.
           </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Link href="/scan" className="btn-primary">
+              Scan again
+            </Link>
+            <Link href="/livestock" className="btn-secondary">
+              Browse herd
+            </Link>
+          </div>
         </div>
       )}
-      {asset && <HealthCard asset={asset} />}
-      {asset && (asset as Livestock).species && (
-        <LivestockKnowledgePanel
-          species={(asset as Livestock).species}
-          breed={(asset as Livestock).breed}
-        />
+
+      {isLivestock && data?.data && (
+        <LivestockScanPassport animal={data.data as Livestock} />
       )}
-      {careContext && <FarmAssistantPanel context={careContext} />}
+
+      {isVegetation && data?.data && (
+        <VegetationScanPassport block={data.data as VegetationBlock} />
+      )}
     </div>
   );
 }

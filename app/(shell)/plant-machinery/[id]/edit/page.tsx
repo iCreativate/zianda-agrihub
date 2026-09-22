@@ -1,5 +1,6 @@
 "use client";
 
+import { FormPage } from "@/components/shell/form-page";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -75,30 +76,26 @@ export default function EditPlantMachineryPage() {
   }
 
   if (!loaded) {
-    return <p className="text-sm text-slate-400">Loading…</p>;
+    return <p className="text-sm text-ink-subtle">Loading…</p>;
   }
 
   return (
-    <div className="space-y-6">
-      <Link href={`/plant-machinery/${id}`} className="text-sm font-medium text-slate-300 hover:text-white">
-        ← Back to equipment
-      </Link>
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
-          Edit equipment
-        </h1>
-        <p className="text-sm text-slate-300">
-          Update the details below.
-        </p>
-      </div>
+    <FormPage
+      backHref={`/plant-machinery/${id}`}
+      backLabel="Back to equipment"
+      eyebrow="Yard"
+      title="Edit equipment"
+      
+      image="/images/home/machinery.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
-          <div role="alert" className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200">
+          <div role="alert" className="alert-error">
             {error}
           </div>
         )}
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="name">
+          <label className="label-field" htmlFor="name">
             Name or description
           </label>
           <input
@@ -106,18 +103,18 @@ export default function EditPlantMachineryPage() {
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="type">
+          <label className="label-field" htmlFor="type">
             Type
           </label>
           <select
             id="type"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="input-dark mt-1"
+            className="input-field mt-1"
           >
             {EQUIPMENT_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -125,7 +122,7 @@ export default function EditPlantMachineryPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="notes">
+          <label className="label-field" htmlFor="notes">
             Notes (optional)
           </label>
           <textarea
@@ -133,18 +130,18 @@ export default function EditPlantMachineryPage() {
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200">Image (optional)</label>
+          <label className="label-field">Image (optional)</label>
           <input
             type="file"
             accept="image/*"
             onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
-            className="mt-1 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-slate-200"
+            className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-lg file:border-0 file:bg-stone file:px-3 file:py-1.5 file:text-ink-muted"
           />
-          {imageFile && <p className="mt-1 text-xs text-slate-500">New: {imageFile.name}</p>}
+          {imageFile && <p className="mt-1 text-xs text-ink-subtle">New: {imageFile.name}</p>}
         </div>
         <div className="flex gap-3">
           <button type="submit" className="btn-primary" disabled={submitting}>
@@ -155,6 +152,6 @@ export default function EditPlantMachineryPage() {
           </Link>
         </div>
       </form>
-    </div>
+    </FormPage>
   );
 }

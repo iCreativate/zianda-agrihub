@@ -1,5 +1,6 @@
 "use client";
 
+import { FormPage } from "@/components/shell/form-page";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -49,31 +50,27 @@ export default function NewMotorPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <Link href="/motor" className="text-sm font-medium text-slate-300 hover:text-white">
-        ← Back to motor (vehicles)
-      </Link>
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
-          Add vehicle
-        </h1>
-        <p className="text-sm text-slate-300">
-          Record a tractor, bakkie, trailer, or other agricultural vehicle.
-        </p>
-      </div>
+    <FormPage
+      backHref="/motor"
+      backLabel="Back to motor"
+      eyebrow="Yard"
+      title="Add vehicle"
+      description="Record a tractor, bakkie, trailer, or other agricultural vehicle."
+      image="/images/home/machinery.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
-          <div role="alert" className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200">{error}</div>
+          <div role="alert" className="alert-error">{error}</div>
         )}
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="type">
+          <label className="label-field" htmlFor="type">
             Vehicle type
           </label>
           <select
             id="type"
             value={type}
             onChange={(e) => setType(e.target.value)}
-            className="input-dark mt-1"
+            className="input-field mt-1"
           >
             {VEHICLE_TYPES.map((t) => (
               <option key={t} value={t}>{t}</option>
@@ -81,7 +78,7 @@ export default function NewMotorPage() {
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="makeModel">
+          <label className="label-field" htmlFor="makeModel">
             Make & model
           </label>
           <input
@@ -90,11 +87,11 @@ export default function NewMotorPage() {
             value={makeModel}
             onChange={(e) => setMakeModel(e.target.value)}
             placeholder="e.g. John Deere 5055, Toyota Hilux"
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="regOrSerial">
+          <label className="label-field" htmlFor="regOrSerial">
             Registration or serial number
           </label>
           <input
@@ -103,11 +100,11 @@ export default function NewMotorPage() {
             value={regOrSerial}
             onChange={(e) => setRegOrSerial(e.target.value)}
             placeholder="e.g. ABC 123 GP, or serial if no reg"
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="notes">
+          <label className="label-field" htmlFor="notes">
             Notes (optional)
           </label>
           <textarea
@@ -116,13 +113,13 @@ export default function NewMotorPage() {
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Next service date, insurance, etc."
             rows={2}
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200">Image (optional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-slate-200" />
-          {imageFile && <p className="mt-1 text-xs text-slate-500">{imageFile.name}</p>}
+          <label className="label-field">Image (optional)</label>
+          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-lg file:border-0 file:bg-stone file:px-3 file:py-1.5 file:text-ink-muted" />
+          {imageFile && <p className="mt-1 text-xs text-ink-subtle">{imageFile.name}</p>}
         </div>
         <div className="flex gap-3">
           <button type="submit" className="btn-primary" disabled={submitting}>
@@ -133,6 +130,6 @@ export default function NewMotorPage() {
           </Link>
         </div>
       </form>
-    </div>
+    </FormPage>
   );
 }

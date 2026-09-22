@@ -68,6 +68,7 @@ export interface VegetationBlock {
   plantingDate: string;
   areaHectares?: number;
   qrCode?: string;
+  photoUrl?: string;
   soilLogs?: SoilLog[];
   inputSchedule?: InputScheduleItem[];
   createdAt: string;
@@ -110,6 +111,8 @@ export interface EducationContent {
 
 export type AssetType = "livestock" | "vegetation";
 
+export type RecoveryStatus = "monitoring" | "recovering" | "recovered" | "critical";
+
 export interface HealthTimelinePhoto {
   id: string;
   assetType: AssetType;
@@ -117,6 +120,11 @@ export interface HealthTimelinePhoto {
   capturedAt: string;
   photoUrl: string;
   notes?: string;
+  observation?: string;
+  treatment?: string;
+  recoveryStatus?: RecoveryStatus;
+  weightKg?: number;
+  cropStage?: string;
 }
 
 export interface MonthlySummary {
@@ -136,6 +144,19 @@ export interface VaccinationScheduleItem {
 
 export type MarketplaceListingType = "selling" | "buying";
 
+export type MarketplaceCategory =
+  | "livestock"
+  | "crops"
+  | "produce"
+  | "equipment"
+  | "seeds"
+  | "feed"
+  | "other";
+
+export type MarketplaceCondition = "new" | "excellent" | "good" | "used" | "fair";
+
+export type MarketplaceSellerType = "farmer" | "organisation";
+
 export interface MarketplaceListing {
   id: string;
   type: MarketplaceListingType;
@@ -145,5 +166,13 @@ export interface MarketplaceListing {
   creatorName?: string;
   imageUrl?: string;
   createdAt: string;
+  category?: MarketplaceCategory;
+  priceAmount?: number;
+  priceCurrency?: string;
+  location?: string;
+  condition?: MarketplaceCondition;
+  sellerType?: MarketplaceSellerType;
+  quantity?: string;
+  verified?: boolean;
 }
 

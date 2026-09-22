@@ -1,5 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL?.replace(/\/$/, "");
+    if (!supabaseUrl) return [];
+    return [
+      {
+        source: "/api/supabase/:path*",
+        destination: `${supabaseUrl}/:path*`
+      }
+    ];
+  },
   async headers() {
     const isDev = process.env.NODE_ENV === "development";
     // In development, Next.js and webpack use eval() for HMR and source maps.

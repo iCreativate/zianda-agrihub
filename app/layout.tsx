@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppProviders } from "./providers";
+
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans"
+});
 
 export const metadata: Metadata = {
   title: "Zianda Agri-Hub",
@@ -10,11 +17,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout(props: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen antialiased">
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen bg-ivory font-sans text-ink antialiased">
         <AppProviders>{props.children}</AppProviders>
       </body>
     </html>
   );
 }
-

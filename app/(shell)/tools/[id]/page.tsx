@@ -37,12 +37,12 @@ export default function ToolDetailPage() {
     setEntry(getEntry(id));
   }, [id]);
 
-  if (entry === undefined) return <p className="text-sm text-slate-400">Loading…</p>;
+  if (entry === undefined) return <p className="text-sm text-ink-subtle">Loading…</p>;
   if (entry === null) {
     return (
       <>
-        <Link href="/tools" className="text-sm font-medium text-slate-300 hover:text-white">← Back to tools</Link>
-        <p className="text-slate-300">Tool not found.</p>
+        <Link href="/tools" className="link-quiet">← Back to tools</Link>
+        <p className="text-ink-muted">Tool not found.</p>
       </>
     );
   }
@@ -50,7 +50,7 @@ export default function ToolDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/tools" className="inline-flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white">
+        <Link href="/tools" className="inline-flex items-center gap-1 link-quiet">
           <ArrowLeft className="h-4 w-4" /> Back to tools
         </Link>
         <Link href={`/tools/${id}/edit`} className="btn-primary">
@@ -59,31 +59,31 @@ export default function ToolDetailPage() {
       </div>
       <div className="card-shell space-y-4">
         {entry.imageUrl && (
-          <div className="overflow-hidden rounded-xl bg-slate-800">
+          <div className="overflow-hidden rounded-xl bg-ivory-deep">
             <img src={entry.imageUrl} alt="" className="max-h-80 w-full object-contain" />
           </div>
         )}
-        <h1 className="text-xl font-semibold text-slate-50">{entry.name}</h1>
+        <h1 className="text-xl font-semibold text-ink">{entry.name}</h1>
         <dl className="grid gap-3 text-sm">
           <div>
-            <dt className="text-slate-400">Category</dt>
-            <dd className="font-medium text-slate-100">{entry.category}</dd>
+            <dt className="text-ink-subtle">Category</dt>
+            <dd className="font-medium text-ink">{entry.category}</dd>
           </div>
           {entry.condition && (
             <div>
-              <dt className="text-slate-400">Condition</dt>
-              <dd className="text-slate-100">{entry.condition}</dd>
+              <dt className="text-ink-subtle">Condition</dt>
+              <dd className="text-ink">{entry.condition}</dd>
             </div>
           )}
           {entry.location && (
             <div>
-              <dt className="text-slate-400">Storage location</dt>
-              <dd className="text-slate-100">{entry.location}</dd>
+              <dt className="text-ink-subtle">Storage location</dt>
+              <dd className="text-ink">{entry.location}</dd>
             </div>
           )}
           <div>
-            <dt className="text-slate-400">Added</dt>
-            <dd className="text-slate-300">{new Date(entry.addedAt).toLocaleDateString(undefined, { dateStyle: "medium" })}</dd>
+            <dt className="text-ink-subtle">Added</dt>
+            <dd className="text-ink-muted">{new Date(entry.addedAt).toLocaleDateString(undefined, { dateStyle: "medium" })}</dd>
           </div>
         </dl>
       </div>

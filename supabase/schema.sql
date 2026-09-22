@@ -78,6 +78,7 @@ create table public.vegetation_blocks (
   planting_date date not null,
   area_hectares numeric,
   qr_code text unique,
+  photo_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -178,6 +179,15 @@ create table public.marketplace_listings (
   description text,
   contact text,
   creator_name text,
+  image_url text,
+  category text default 'other' check (category in ('livestock', 'crops', 'produce', 'equipment', 'seeds', 'feed', 'other')),
+  price_amount numeric,
+  price_currency text default 'ZAR',
+  location text,
+  condition text,
+  seller_type text default 'farmer' check (seller_type in ('farmer', 'organisation')),
+  quantity text,
+  verified boolean default false,
   created_at timestamptz not null default now()
 );
 

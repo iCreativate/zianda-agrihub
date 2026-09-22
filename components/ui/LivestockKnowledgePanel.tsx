@@ -12,18 +12,16 @@ export function LivestockKnowledgePanel(props: LivestockKnowledgePanelProps) {
   if (!knowledge) return null;
 
   return (
-    <section className="space-y-2 rounded-2xl border border-emerald-500/40 bg-slate-900/80 p-4 shadow-md shadow-emerald-500/20">
+    <section className="space-y-2 surface p-4">
       <header>
-        <p className="text-xs font-semibold uppercase tracking-wider text-emerald-300">
-          Learn more about this breed
-        </p>
-        <p className="mt-0.5 text-sm font-semibold text-slate-100">{knowledge.heading}</p>
+        <p className="section-eyebrow">Learn more about this breed</p>
+        <p className="mt-1 text-sm font-semibold">{knowledge.heading}</p>
       </header>
-      <p className="text-xs leading-relaxed text-slate-300">{knowledge.summary}</p>
-      <ul className="mt-1 space-y-1 text-xs text-slate-200">
+      <p className="text-xs leading-relaxed text-ink-muted">{knowledge.summary}</p>
+      <ul className="mt-1 space-y-1 text-xs text-ink-muted">
         {knowledge.points.map((point) => (
           <li key={point} className="flex gap-2">
-            <span className="mt-[5px] h-1 w-1 rounded-full bg-emerald-400" />
+            <span className="mt-[6px] h-1 w-1 shrink-0 rounded-full bg-crop" />
             <span className="leading-relaxed">{point}</span>
           </li>
         ))}
@@ -31,4 +29,3 @@ export function LivestockKnowledgePanel(props: LivestockKnowledgePanelProps) {
     </section>
   );
 }
-

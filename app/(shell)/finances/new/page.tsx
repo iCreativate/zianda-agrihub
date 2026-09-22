@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { getSupabaseClient } from "@/lib/supabase/client";
+import { FormPage } from "@/components/shell/form-page";
 import type { TransactionCategory } from "@/types/agriculture";
 
 const categories: TransactionCategory[] = [
@@ -84,31 +84,19 @@ export default function NewTransactionPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4">
-        <Link
-          href="/finances"
-          className="text-sm font-medium text-slate-300 hover:text-white"
-        >
-          ← Back to finances
-        </Link>
-      </div>
-
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">
-          Add transaction
-        </h1>
-        <p className="text-sm text-slate-300">
-          Record a cost and optionally link it to a specific animal or crop block so reports stay
-          meaningful.
-        </p>
-      </div>
-
+    <FormPage
+      backHref="/finances"
+      backLabel="Back to finances"
+      eyebrow="Books"
+      title="Add transaction"
+      description="Record a cost and optionally link it to a specific animal or crop block so reports stay meaningful."
+      image="/images/home/finances.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
           <div
             role="alert"
-            className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200"
+            className="alert-error"
           >
             {error}
           </div>
@@ -116,7 +104,7 @@ export default function NewTransactionPage() {
 
         <div className="grid gap-4 sm:grid-cols-3">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="tx-date">
+            <label className="label-field" htmlFor="tx-date">
               Date
             </label>
             <input
@@ -124,11 +112,11 @@ export default function NewTransactionPage() {
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="tx-amount">
+            <label className="label-field" htmlFor="tx-amount">
               Amount
             </label>
             <input
@@ -139,11 +127,11 @@ export default function NewTransactionPage() {
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
               placeholder="e.g. 150.00"
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="tx-currency">
+            <label className="label-field" htmlFor="tx-currency">
               Currency
             </label>
             <input
@@ -151,9 +139,9 @@ export default function NewTransactionPage() {
               type="text"
               value={currency}
               onChange={(e) => setCurrency(e.target.value.toUpperCase())}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             />
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Default is South African rand (ZAR). Adjust only if you track in another currency.
             </p>
           </div>
@@ -161,14 +149,14 @@ export default function NewTransactionPage() {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-slate-200" htmlFor="tx-category">
+            <label className="label-field" htmlFor="tx-category">
               Category
             </label>
             <select
               id="tx-category"
               value={category}
               onChange={(e) => setCategory(e.target.value as TransactionCategory)}
-              className="input-dark mt-1"
+              className="input-field mt-1"
             >
               {categories.map((cat) => (
                 <option key={cat} value={cat}>
@@ -179,7 +167,7 @@ export default function NewTransactionPage() {
             {category === "other" && (
               <>
                 <label
-                  className="mt-3 block text-xs font-medium text-slate-200"
+                  className="mt-3 block text-xs font-medium text-ink-muted"
                   htmlFor="tx-custom-category"
                 >
                   Custom category name
@@ -190,18 +178,18 @@ export default function NewTransactionPage() {
                   value={customCategory}
                   onChange={(e) => setCustomCategory(e.target.value)}
                   placeholder="e.g. transport, rent"
-                  className="input-dark mt-1 text-sm"
+                  className="input-field mt-1 text-sm"
                 />
               </>
             )}
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               This controls how the transaction appears in your summaries and burn-rate charts. If
               your category is not listed, choose &quot;Other&quot; and type your own name.
             </p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-200">
+            <label className="label-field">
               Link to an animal or crop block (optional)
             </label>
             <div className="mt-1 flex gap-2">
@@ -213,7 +201,7 @@ export default function NewTransactionPage() {
                   setLinkType(next);
                   setLinkedId("");
                 }}
-                className="input-dark w-32"
+                className="input-field w-32"
               >
                 <option value="none">None</option>
                 <option value="livestock">Animal ID</option>
@@ -227,18 +215,18 @@ export default function NewTransactionPage() {
                   placeholder={
                     linkType === "livestock" ? "Livestock ID or QR ID" : "Crop block ID or QR ID"
                   }
-                  className="input-dark flex-1"
+                  className="input-field flex-1"
                 />
               )}
             </div>
-            <p className="mt-1 text-xs text-slate-400">
+            <p className="mt-1 text-xs text-ink-subtle">
               Linking lets you see costs per animal or per field in future reports.
             </p>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="tx-description">
+          <label className="label-field" htmlFor="tx-description">
             Notes (optional)
           </label>
           <textarea
@@ -247,7 +235,7 @@ export default function NewTransactionPage() {
             onChange={(e) => setDescription(e.target.value)}
             rows={3}
             placeholder="e.g. 3 x 50kg bags of grower feed from local co-op."
-            className="input-dark mt-1"
+            className="input-field mt-1"
           />
         </div>
 
@@ -255,7 +243,7 @@ export default function NewTransactionPage() {
           {submitting ? "Saving transaction…" : "Save transaction"}
         </button>
       </form>
-    </div>
+    </FormPage>
   );
 }
 

@@ -37,12 +37,12 @@ export default function MotorDetailPage() {
     setEntry(getEntry(id));
   }, [id]);
 
-  if (entry === undefined) return <p className="text-sm text-slate-400">Loading…</p>;
+  if (entry === undefined) return <p className="text-sm text-ink-subtle">Loading…</p>;
   if (entry === null) {
     return (
       <>
-        <Link href="/motor" className="text-sm font-medium text-slate-300 hover:text-white">← Back to motor</Link>
-        <p className="text-slate-300">Vehicle not found.</p>
+        <Link href="/motor" className="link-quiet">← Back to motor</Link>
+        <p className="text-ink-muted">Vehicle not found.</p>
       </>
     );
   }
@@ -50,7 +50,7 @@ export default function MotorDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/motor" className="inline-flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white">
+        <Link href="/motor" className="inline-flex items-center gap-1 link-quiet">
           <ArrowLeft className="h-4 w-4" /> Back to motor (vehicles)
         </Link>
         <Link href={`/motor/${id}/edit`} className="btn-primary">
@@ -59,33 +59,33 @@ export default function MotorDetailPage() {
       </div>
       <div className="card-shell space-y-4">
         {entry.imageUrl && (
-          <div className="overflow-hidden rounded-xl bg-slate-800">
+          <div className="overflow-hidden rounded-xl bg-ivory-deep">
             <img src={entry.imageUrl} alt="" className="max-h-80 w-full object-contain" />
           </div>
         )}
-        <h1 className="text-xl font-semibold text-slate-50">{entry.type} – {entry.makeModel}</h1>
+        <h1 className="text-xl font-semibold text-ink">{entry.type} – {entry.makeModel}</h1>
         <dl className="grid gap-3 text-sm">
           <div>
-            <dt className="text-slate-400">Type</dt>
-            <dd className="font-medium text-slate-100">{entry.type}</dd>
+            <dt className="text-ink-subtle">Type</dt>
+            <dd className="font-medium text-ink">{entry.type}</dd>
           </div>
           <div>
-            <dt className="text-slate-400">Make & model</dt>
-            <dd className="text-slate-100">{entry.makeModel}</dd>
+            <dt className="text-ink-subtle">Make & model</dt>
+            <dd className="text-ink">{entry.makeModel}</dd>
           </div>
           <div>
-            <dt className="text-slate-400">Registration / serial</dt>
-            <dd className="text-slate-100">{entry.regOrSerial}</dd>
+            <dt className="text-ink-subtle">Registration / serial</dt>
+            <dd className="text-ink">{entry.regOrSerial}</dd>
           </div>
           {entry.notes && (
             <div>
-              <dt className="text-slate-400">Notes</dt>
-              <dd className="text-slate-200 whitespace-pre-wrap">{entry.notes}</dd>
+              <dt className="text-ink-subtle">Notes</dt>
+              <dd className="text-ink-muted whitespace-pre-wrap">{entry.notes}</dd>
             </div>
           )}
           <div>
-            <dt className="text-slate-400">Added</dt>
-            <dd className="text-slate-300">{new Date(entry.addedAt).toLocaleDateString(undefined, { dateStyle: "medium" })}</dd>
+            <dt className="text-ink-subtle">Added</dt>
+            <dd className="text-ink-muted">{new Date(entry.addedAt).toLocaleDateString(undefined, { dateStyle: "medium" })}</dd>
           </div>
         </dl>
       </div>

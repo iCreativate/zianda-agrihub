@@ -39,7 +39,7 @@ export default function PlantMachineryDetailPage() {
   if (entry === undefined) {
     return (
       <div className="space-y-6">
-        <p className="text-sm text-slate-400">Loading…</p>
+        <p className="text-sm text-ink-subtle">Loading…</p>
       </div>
     );
   }
@@ -47,10 +47,10 @@ export default function PlantMachineryDetailPage() {
   if (entry === null) {
     return (
       <div className="space-y-6">
-        <Link href="/plant-machinery" className="text-sm font-medium text-slate-300 hover:text-white">
+        <Link href="/plant-machinery" className="link-quiet">
           ← Back to plant and machinery
         </Link>
-        <p className="text-slate-300">Equipment not found.</p>
+        <p className="text-ink-muted">Equipment not found.</p>
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function PlantMachineryDetailPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <Link href="/plant-machinery" className="inline-flex items-center gap-1 text-sm font-medium text-slate-300 hover:text-white">
+        <Link href="/plant-machinery" className="inline-flex items-center gap-1 link-quiet">
           <ArrowLeft className="h-4 w-4" />
           Back to plant and machinery
         </Link>
@@ -69,25 +69,25 @@ export default function PlantMachineryDetailPage() {
       </div>
       <div className="card-shell space-y-4">
         {entry.imageUrl && (
-          <div className="overflow-hidden rounded-xl bg-slate-800">
+          <div className="overflow-hidden rounded-xl bg-ivory-deep">
             <img src={entry.imageUrl} alt="" className="max-h-80 w-full object-contain" />
           </div>
         )}
-        <h1 className="text-xl font-semibold text-slate-50">{entry.name}</h1>
+        <h1 className="text-xl font-semibold text-ink">{entry.name}</h1>
         <dl className="grid gap-3 text-sm">
           <div>
-            <dt className="text-slate-400">Type</dt>
-            <dd className="font-medium text-slate-100">{entry.type}</dd>
+            <dt className="text-ink-subtle">Type</dt>
+            <dd className="font-medium text-ink">{entry.type}</dd>
           </div>
           {entry.notes && (
             <div>
-              <dt className="text-slate-400">Notes</dt>
-              <dd className="text-slate-200 whitespace-pre-wrap">{entry.notes}</dd>
+              <dt className="text-ink-subtle">Notes</dt>
+              <dd className="text-ink-muted whitespace-pre-wrap">{entry.notes}</dd>
             </div>
           )}
           <div>
-            <dt className="text-slate-400">Added</dt>
-            <dd className="text-slate-300">
+            <dt className="text-ink-subtle">Added</dt>
+            <dd className="text-ink-muted">
               {new Date(entry.addedAt).toLocaleDateString(undefined, { dateStyle: "medium" })}
             </dd>
           </div>

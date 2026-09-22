@@ -1,5 +1,6 @@
 "use client";
 
+import { FormPage } from "@/components/shell/form-page";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -75,47 +76,48 @@ export default function EditMotorPage() {
     }
   }
 
-  if (!loaded) return <p className="text-sm text-slate-400">Loading…</p>;
+  if (!loaded) return <p className="text-sm text-ink-subtle">Loading…</p>;
 
   return (
-    <div className="space-y-6">
-      <Link href={`/motor/${id}`} className="text-sm font-medium text-slate-300 hover:text-white">← Back to vehicle</Link>
-      <div className="space-y-1">
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-50 md:text-3xl">Edit vehicle</h1>
-        <p className="text-sm text-slate-300">Update the details below.</p>
-      </div>
+    <FormPage
+      backHref={`/motor/${id}`}
+      backLabel="Back to vehicle"
+      eyebrow="Yard"
+      title="Edit vehicle"
+      image="/images/home/machinery.jpg"
+    >
       <form onSubmit={handleSubmit} className="card-shell space-y-5">
         {error && (
-          <div role="alert" className="rounded-xl border border-red-500/50 bg-red-950/40 px-3 py-2 text-sm text-red-200">{error}</div>
+          <div role="alert" className="alert-error">{error}</div>
         )}
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="type">Vehicle type</label>
-          <select id="type" value={type} onChange={(e) => setType(e.target.value)} className="input-dark mt-1">
+          <label className="label-field" htmlFor="type">Vehicle type</label>
+          <select id="type" value={type} onChange={(e) => setType(e.target.value)} className="input-field mt-1">
             {VEHICLE_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="makeModel">Make & model</label>
-          <input id="makeModel" type="text" value={makeModel} onChange={(e) => setMakeModel(e.target.value)} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="makeModel">Make & model</label>
+          <input id="makeModel" type="text" value={makeModel} onChange={(e) => setMakeModel(e.target.value)} className="input-field mt-1" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="regOrSerial">Registration or serial number</label>
-          <input id="regOrSerial" type="text" value={regOrSerial} onChange={(e) => setRegOrSerial(e.target.value)} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="regOrSerial">Registration or serial number</label>
+          <input id="regOrSerial" type="text" value={regOrSerial} onChange={(e) => setRegOrSerial(e.target.value)} className="input-field mt-1" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200" htmlFor="notes">Notes (optional)</label>
-          <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="input-dark mt-1" />
+          <label className="label-field" htmlFor="notes">Notes (optional)</label>
+          <textarea id="notes" value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} className="input-field mt-1" />
         </div>
         <div>
-          <label className="block text-sm font-medium text-slate-200">Image (optional)</label>
-          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-slate-300 file:mr-3 file:rounded-lg file:border-0 file:bg-slate-700 file:px-3 file:py-1.5 file:text-slate-200" />
-          {imageFile && <p className="mt-1 text-xs text-slate-500">New: {imageFile.name}</p>}
+          <label className="label-field">Image (optional)</label>
+          <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files?.[0] ?? null)} className="mt-1 block w-full text-sm text-ink-muted file:mr-3 file:rounded-lg file:border-0 file:bg-stone file:px-3 file:py-1.5 file:text-ink-muted" />
+          {imageFile && <p className="mt-1 text-xs text-ink-subtle">New: {imageFile.name}</p>}
         </div>
         <div className="flex gap-3">
           <button type="submit" className="btn-primary" disabled={submitting}>{submitting ? "Saving…" : "Save changes"}</button>
           <Link href={`/motor/${id}`} className="btn-secondary">Cancel</Link>
         </div>
       </form>
-    </div>
+    </FormPage>
   );
 }
