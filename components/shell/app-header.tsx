@@ -153,8 +153,8 @@ export function AppHeader() {
             }
           >
             <div className="px-3.5 py-2.5">
-              <p className="text-sm font-medium text-ink">Farmer</p>
-              <p className="text-xs text-ink-subtle">demo@zianda-agrihub.com</p>
+              <p className="text-sm font-medium text-ink">{farm.name}</p>
+              <p className="text-xs text-ink-subtle">{farm.location}</p>
             </div>
             <Link href="/settings" className="block px-3.5 py-2.5 text-sm text-ink hover:bg-ivory">
               Farm settings

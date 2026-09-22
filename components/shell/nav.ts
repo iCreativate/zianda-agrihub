@@ -14,7 +14,8 @@ import {
   Store,
   Leaf,
   BookOpen,
-  Users
+  Users,
+  Bird
 } from "lucide-react";
 
 export type NavItem = {
@@ -31,6 +32,7 @@ export type NavItem = {
 export const primaryNav: NavItem[] = [
   { href: "/dashboard", label: "Overview", icon: LayoutDashboard, match: "exact" },
   { href: "/livestock", label: "Livestock", icon: PawPrint },
+  { href: "/broilers", label: "Broilers", icon: Bird },
   { href: "/vegetation", label: "Crops", icon: Sprout },
   { href: "/vaccinations", label: "Health", icon: HeartPulse },
   {

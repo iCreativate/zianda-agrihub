@@ -7,9 +7,6 @@ import { useState } from "react";
 import { getSupabaseClient } from "@/lib/supabase/client";
 import { BrandMark } from "@/components/ui/brand-mark";
 
-const DEMO_EMAIL = "demo@zianda-agrihub.com";
-const DEMO_PASSWORD = "demo1234";
-
 export function LoginClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -24,12 +21,6 @@ export function LoginClient() {
     setError(null);
     setLoading(true);
     try {
-      if (email.trim().toLowerCase() === DEMO_EMAIL && password === DEMO_PASSWORD) {
-        router.push(nextUrl);
-        router.refresh();
-        setLoading(false);
-        return;
-      }
       const supabase = getSupabaseClient();
       const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
@@ -92,13 +83,6 @@ export function LoginClient() {
               <h1 className="text-2xl font-semibold tracking-tight">Log in</h1>
               <p className="text-sm text-ink-muted">
                 Enter your email and password to access your farm dashboard.
-              </p>
-            </div>
-
-            <div className="rounded-control border border-crop/20 bg-crop-soft px-3 py-2 text-xs text-crop">
-              <p className="font-semibold">Demo access</p>
-              <p className="mt-0.5">
-                {DEMO_EMAIL} <span className="text-ink-subtle">/</span> {DEMO_PASSWORD}
               </p>
             </div>
 

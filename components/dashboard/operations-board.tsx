@@ -3,6 +3,7 @@
 import { useMemo } from "react";
 import { ActivityFeed } from "@/components/dashboard/activity-feed";
 import { AttentionList } from "@/components/dashboard/attention-list";
+import { BroilerPanel } from "@/components/dashboard/broiler-panel";
 import { DashboardHero } from "@/components/dashboard/dashboard-hero";
 import { FarmSnapshot } from "@/components/dashboard/farm-snapshot";
 import {
@@ -178,6 +179,10 @@ export function OperationsBoard() {
 
         <ScrollReveal delay={100}>
           <PerformancePanel metrics={performanceMetrics} loading={loading} />
+        </ScrollReveal>
+
+        <ScrollReveal delay={120}>
+          <BroilerPanel />
         </ScrollReveal>
       </div>
     </div>

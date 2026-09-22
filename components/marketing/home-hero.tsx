@@ -57,7 +57,7 @@ export function HomeHero() {
         <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:gap-12">
           <div className="max-w-xl lg:max-w-none">
             <p
-              className={`home-enter text-[11px] font-semibold uppercase tracking-eyebrow text-wheat ${mounted ? "home-enter-visible" : ""}`}
+              className={`home-enter text-[11px] font-semibold uppercase tracking-eyebrow text-paper ${mounted ? "home-enter-visible" : ""}`}
               style={{ transitionDelay: "80ms" }}
             >
               Built for African agriculture
